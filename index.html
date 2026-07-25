@@ -5,141 +5,169 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>兆丰装饰 - 让家更美好</title>
     <style>
-        /* ===== 全局设置 ===== */
+        /* ===== 全局 ===== */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
             background: #f5f0eb;
             color: #3d3d3d;
             line-height: 1.6;
+            display: flex;
+            min-height: 100vh;
         }
-        .container { max-width: 1100px; margin: 0 auto; padding: 20px; }
 
-        /* ===== 导航栏 ===== */
-        .navbar {
+        /* ===== 侧边栏 ===== */
+        .sidebar {
+            width: 240px;
+            background: #2c1810;
+            color: #f5ede8;
+            padding: 30px 0;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            top: 0; left: 0; bottom: 0;
+            z-index: 100;
+            transition: transform 0.3s;
+        }
+        .sidebar .logo {
+            font-size: 26px; font-weight: bold; letter-spacing: 2px;
+            padding: 0 24px 30px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 20px;
+        }
+        .sidebar .logo span { color: #d4a373; }
+        .sidebar a {
+            color: #f5ede8; text-decoration: none;
+            padding: 14px 24px; display: block;
+            font-size: 16px; transition: background 0.2s;
+            border-left: 3px solid transparent;
+        }
+        .sidebar a:hover, .sidebar a.active {
+            background: rgba(212,163,115,0.15);
+            border-left-color: #d4a373;
+            color: #d4a373;
+        }
+
+        /* 侧边栏折叠按钮（手机端） */
+        .sidebar-toggle {
+            display: none;
+            position: fixed; top: 15px; left: 15px; z-index: 200;
+            background: #2c1810; color: #f5ede8; border: none;
+            font-size: 24px; padding: 8px 12px; border-radius: 6px; cursor: pointer;
+        }
+
+        /* ===== 主内容区 ===== */
+        .main-content {
+            margin-left: 240px;
+            flex: 1;
+            padding: 20px;
+            max-width: 1100px;
+            width: 100%;
+        }
+        .content-section { display: none; animation: fadeIn 0.3s; }
+        .content-section.active-section { display: block; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ===== 顶部导航栏（原本的样式） ===== */
+        .top-nav {
             background: #2c1810;
             color: #f5ede8;
             padding: 16px 0;
-            border-radius: 12px 12px 0 0;
-        }
-        .navbar .container {
+            border-radius: 12px;
+            margin-bottom: 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
+            padding-left: 30px; padding-right: 30px;
         }
-        .logo { font-size: 28px; font-weight: bold; letter-spacing: 2px; }
-        .logo span { color: #d4a373; }
-        .nav-links a {
-            color: #f5ede8;
-            text-decoration: none;
-            margin-left: 28px;
-            font-size: 16px;
-            transition: color 0.3s;
+        .top-nav .logo-text { font-size: 24px; font-weight: bold; letter-spacing: 2px; }
+        .top-nav .logo-text span { color: #d4a373; }
+        .top-nav .nav-links a {
+            color: #f5ede8; text-decoration: none;
+            margin-left: 28px; font-size: 16px;
+            transition: color 0.3s; padding-bottom: 4px;
+            border-bottom: 2px solid transparent;
         }
-        .nav-links a:hover { color: #d4a373; }
+        .top-nav .nav-links a:hover,
+        .top-nav .nav-links a.active-top {
+            color: #d4a373;
+            border-bottom-color: #d4a373;
+        }
 
-        /* ===== 卡片 ===== */
+        /* ===== 卡片等原有样式 ===== */
         .card {
-            background: white;
-            padding: 40px;
-            border-radius: 0 0 12px 12px;
-            box-shadow: 0 4px 20px rgba(44, 24, 16, 0.08);
-            margin-bottom: 30px;
+            background: white; padding: 40px; border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(44, 24, 16, 0.08); margin-bottom: 30px;
         }
         .section-title {
-            font-size: 26px;
-            color: #2c1810;
+            font-size: 26px; color: #2c1810;
             border-left: 6px solid #d4a373;
-            padding-left: 18px;
-            margin-bottom: 24px;
+            padding-left: 18px; margin-bottom: 24px;
         }
-
-        /* ===== Hero 区 ===== */
         .hero {
             background: linear-gradient(135deg, #2c1810 0%, #5a3a2e 100%);
-            color: #f5ede8;
-            padding: 60px 40px;
-            border-radius: 12px;
-            margin-bottom: 30px;
-            text-align: center;
+            color: #f5ede8; padding: 60px 40px; border-radius: 12px;
+            margin-bottom: 30px; text-align: center;
         }
         .hero h1 { font-size: 42px; margin-bottom: 12px; }
         .hero h1 span { color: #d4a373; }
         .hero p { font-size: 18px; opacity: 0.85; max-width: 600px; margin: 0 auto; }
-
-        /* ===== 服务三列 ===== */
         .services-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin: 20px 0 10px;
+            gap: 20px; margin: 20px 0 10px;
         }
         .service-item {
-            background: #faf6f2;
-            padding: 24px 16px;
-            border-radius: 10px;
-            text-align: center;
-            transition: transform 0.2s;
+            background: #faf6f2; padding: 24px 16px; border-radius: 10px;
+            text-align: center; transition: transform 0.2s;
         }
         .service-item:hover { transform: translateY(-4px); }
         .service-item .icon { font-size: 36px; display: block; margin-bottom: 8px; }
         .service-item h3 { color: #2c1810; font-size: 18px; }
         .service-item p { font-size: 14px; color: #777; }
-
-        /* ===== 案例展示 ===== */
         .cases-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 20px;
-            margin: 20px 0 10px;
+            gap: 20px; margin: 20px 0 10px;
         }
         .case-item {
-            background: #faf6f2;
-            border-radius: 10px;
-            overflow: hidden;
-            text-align: center;
-            padding-bottom: 16px;
+            background: #faf6f2; border-radius: 10px; overflow: hidden;
+            text-align: center; padding-bottom: 16px;
         }
         .case-item .img-placeholder {
-            height: 160px;
-            background: #e8dfd8;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #a08070;
-            font-size: 14px;
+            height: 160px; background: #e8dfd8;
+            display: flex; align-items: center; justify-content: center;
+            color: #a08070; font-size: 14px;
         }
         .case-item h4 { color: #2c1810; margin: 12px 0 4px; }
         .case-item p { font-size: 14px; color: #777; }
-
-        /* ===== 联系信息 ===== */
         .contact-info {
-            background: #faf6f2;
-            padding: 24px 28px;
-            border-radius: 10px;
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-between;
-            gap: 16px;
+            background: #faf6f2; padding: 24px 28px; border-radius: 10px;
+            display: flex; flex-wrap: wrap; justify-content: space-between; gap: 16px;
         }
         .contact-info div { font-size: 15px; }
         .contact-info strong { color: #2c1810; }
-
-        /* ===== 底部 ===== */
         .footer {
-            text-align: center;
-            padding: 20px 0 10px;
-            color: #999;
-            font-size: 14px;
-            border-top: 1px solid #e8dfd8;
-            margin-top: 10px;
+            text-align: center; padding: 20px 0 10px; color: #999;
+            font-size: 14px; border-top: 1px solid #e8dfd8; margin-top: 10px;
         }
 
         /* ===== 响应式 ===== */
         @media (max-width: 700px) {
-            .navbar .container { flex-direction: column; gap: 12px; }
-            .nav-links a { margin: 0 12px; font-size: 14px; }
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            .sidebar.open {
+                transform: translateX(0);
+            }
+            .sidebar-toggle { display: block; }
+            .main-content { margin-left: 0; padding-top: 60px; }
+            .top-nav { flex-direction: column; gap: 12px; border-radius: 0; }
+            .top-nav .nav-links a { margin: 0 10px; font-size: 14px; }
             .hero h1 { font-size: 28px; }
             .hero { padding: 40px 20px; }
             .card { padding: 24px; }
@@ -148,10 +176,25 @@
 </head>
 <body>
 
-<!-- ===== 导航栏 ===== -->
-<div class="navbar">
-    <div class="container">
-        <div class="logo">🏠 兆丰<span>装饰</span></div>
+<!-- 手机端侧边栏开关 -->
+<button class="sidebar-toggle" onclick="document.querySelector('.sidebar').classList.toggle('open')">☰</button>
+
+<!-- ===== 侧边栏 ===== -->
+<div class="sidebar" id="sidebar">
+    <div class="logo">🏠 兆丰<span>装饰</span></div>
+    🏠 首页
+    🛠 装修服务
+    🖼 案例展示
+    📋 关于我们
+    📞 联系我们
+</div>
+
+<!-- ===== 主内容区 ===== -->
+<div class="main-content" id="main-content">
+
+    <!-- 顶部导航 -->
+    <div class="top-nav">
+        <div class="logo-text">🏠 兆丰<span>装饰</span></div>
         <div class="nav-links">
             首页
             服务
@@ -160,86 +203,158 @@
             联系
         </div>
     </div>
-</div>
 
-<div class="container">
-
-    <!-- ===== Hero 大标题 ===== -->
-    <div class="hero">
-        <h1>把理想家 <span>装进现实</span></h1>
-        <p>专注品质家装28年 · 一站式全屋整装服务 · 让每一平米都充满温度</p >
-    </div>
-
-    <!-- ===== 核心服务 ===== -->
-    <div class="card">
-        <h2 class="section-title">✨ 我们的服务</h2>
-        <div class="services-grid">
-            <div class="service-item">
-                <span class="icon">🎨</span>
-                <h3>全案设计</h3>
-                <p>个性化定制，从毛坯到入住</p >
-            </div>
-            <div class="service-item">
-                <span class="icon">🔨</span>
-                <h3>品质施工</h3>
-                <p>自有工人，德系工艺标准</p >
-            </div>
-            <div class="service-item">
-                <span class="icon">🛋️</span>
-                <h3>软装搭配</h3>
-                <p>家具窗帘灯具，一站式配齐</p >
-            </div>
-            <div class="service-item">
-                <span class="icon">🛡️</span>
-                <h3>五年质保</h3>
-                <p>隐蔽工程保修，售后无忧</p >
+    <!-- 首页内容 -->
+    <div class="content-section active-section" id="home">
+        <div class="hero">
+            <h1>把理想家 <span>装进现实</span></h1>
+            <p>专注品质家装28年 · 一站式全屋整装服务 · 让每一平米都充满温度</p >
+        </div>
+        <div class="card">
+            <h2 class="section-title">✨ 为什么选择我们？</h2>
+            <div class="services-grid">
+                <div class="service-item">
+                    <span class="icon">🎨</span><h3>全案设计</h3><p>个性化定制，从毛坯到入住</p >
+                </div>
+                <div class="service-item">
+                    <span class="icon">🔨</span><h3>品质施工</h3><p>自有工人，德系工艺标准</p >
+                </div>
+                <div class="service-item">
+                    <span class="icon">🛋️</span><h3>软装搭配</h3><p>家具窗帘灯具，一站式配齐</p >
+                </div>
+                <div class="service-item">
+                    <span class="icon">🛡️</span><h3>十年质保</h3><p>隐蔽工程保修，售后无忧</p >
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- ===== 案例展示 ===== -->
-    <div class="card">
-        <h2 class="section-title">🏡 精选案例</h2>
-        <div class="cases-grid">
-            <div class="case-item">
-                <div class="img-placeholder">🖼️ 现代简约 · 客餐厅</div>
-                <h4>现代简约风</h4>
-                <p>120㎡ · 三口之家</p >
-            </div>
-            <div class="case-item">
-                <div class="img-placeholder">🖼️ 原木日式 · 卧室</div>
-                <h4>原木日式风</h4>
-                <p>95㎡ · 二人世界</p >
-            </div>
-            <div class="case-item">
-                <div class="img-placeholder">🖼️ 轻奢法式 · 全屋</div>
-                <h4>轻奢法式风</h4>
-                <p>160㎡ · 四世同堂</p >
+    <!-- 装修服务 -->
+    <div class="content-section" id="services">
+        <div class="card">
+            <h2 class="section-title">🛠 我们的服务</h2>
+            <div class="services-grid">
+                <div class="service-item"><span class="icon">📐</span><h3>全案设计</h3><p>专业设计师量身定制，效果图1:1还原</p ></div>
+                <div class="service-item"><span class="icon">🧱</span><h3>半包施工</h3><p>辅材+人工，主材您自选</p ></div>
+                <div class="service-item"><span class="icon">🏗️</span><h3>全包套餐</h3><p>一站式包工包料，省心省力</p ></div>
+                <div class="service-item"><span class="icon">🪑</span><h3>软装搭配</h3><p>家具、窗帘、灯具全屋设计</p ></div>
+                <div class="service-item"><span class="icon">🔧</span><h3>旧房翻新</h3><p>局部改造、厨卫翻新</p ></div>
+                <div class="service-item"><span class="icon">🏰</span><h3>豪宅装修</h3><p>别墅、大平层高端定制</p ></div>
+                <div class="service-item"><span class="icon">🏢</span><h3>商业空间装修</h3><p>办公室、商铺、餐饮工装</p ></div>
             </div>
         </div>
     </div>
 
-    <!-- ===== 关于我们 + 联系 ===== -->
-    <div class="card">
-        <h2 class="section-title">📞 关于我们</h2>
-        <p style="margin-bottom: 16px; font-size: 15px;">
-            兆丰装饰成立于1998年，深耕本地市场28年，服务超过3000+客户。
-            我们坚持「豪宅装修 · 全案设计施工 · 个性化定制设计」，让装修不再是一件烦心事。
-        </p >
-        <div class="contact-info">
-            <div><strong>📞 电话：</strong> 15121879431</div>
-            <div><strong>📧 邮箱：</strong> bvqja80@163.com</div>
-            <div><strong>📍 地址：</strong> 宁夏银川贺兰县虹桥御景南门往东100米8-4营业房</div>
-            <div><strong>⏰ 营业：</strong> 周一至周日 9:00 - 20:00</div>
+    <!-- 案例展示 -->
+    <div class="content-section" id="cases">
+        <div class="card">
+            <h2 class="section-title">🏡 精选案例</h2>
+            <div class="cases-grid">
+                <div class="case-item">
+                    <div class="img-placeholder">🖼️ 现代简约 · 客餐厅</div>
+                    <h4>现代简约风</h4><p>120㎡ · 三口之家</p >
+                </div>
+                <div class="case-item">
+                    <div class="img-placeholder">🖼️ 原木日式 · 卧室</div>
+                    <h4>原木日式风</h4><p>95㎡ · 二人世界</p >
+                </div>
+                <div class="case-item">
+                    <div class="img-placeholder">🖼️ 轻奢法式 · 全屋</div>
+                    <h4>轻奢法式风</h4><p>160㎡ · 四世同堂</p >
+                </div>
+            </div>
+            <p style="margin-top:20px;">更多实景案例，欢迎到店参观。</p >
         </div>
     </div>
 
-    <!-- ===== 底部 ===== -->
+    <!-- 关于我们 -->
+    <div class="content-section" id="about">
+        <div class="card">
+            <h2 class="section-title">📋 关于兆丰装饰</h2>
+            <p style="font-size:16px; line-height:1.8;">
+                兆丰装饰成立于1998年，深耕本地市场28年，服务超过3000+家庭。
+                我们坚持「豪宅装修 · 全案设计施工 · 个性化定制设计」，让装修不再是一件烦心事。
+            </p >
+            <p style="margin-top:16px;">
+                ✅ 资深设计师一对一沟通<br>
+                ✅ 专注豪宅装修28年<br>
+                ✅ 个性化定制设计<br>
+                ✅ 全案设计施工
+            </p >
+        </div>
+    </div>
+
+    <!-- 联系我们 -->
+    <div class="content-section" id="contact">
+        <div class="card">
+            <h2 class="section-title">📞 联系我们</h2>
+            <div class="contact-info">
+                <div><strong>📞 电话：</strong> 151-2187-9431</div>
+                <div><strong>📧 邮箱：</strong> bvqja80@163.com</div>
+                <div><strong>📍 地址：</strong>  宁夏银川贺兰县虹桥御景南门往东100米8-4营业房</div>
+                <div><strong>⏰ 营业：</strong> 周一至周日 9:00 - 20:00</div>
+            </div>
+            <p style="margin-top:20px;">欢迎随时来电或到店，我们将为您提供免费量房与初步方案。</p >
+        </div>
+    </div>
+
+    <!-- 底部 -->
     <div class="footer">
         © 2026 宁夏兆丰装饰工程有限公司 | 让家更美好
     </div>
-
 </div>
+
+<!-- ===== JavaScript：顶部菜单 + 侧边栏联动 ===== -->
+<script>
+    // 获取所有导航链接（侧边栏 + 顶部）
+    const navLinks = document.querySelectorAll('.nav-link');
+    const topLinks = document.querySelectorAll('.top-link');
+    const sections = document.querySelectorAll('.content-section');
+
+    // 切换页面的函数
+    function switchPage(targetId) {
+        // 隐藏所有内容区块
+        sections.forEach(sec => sec.classList.remove('active-section'));
+        // 显示目标区块
+        document.getElementById(targetId).classList.add('active-section');
+
+        // 移除所有侧边栏的active
+        navLinks.forEach(link => link.classList.remove('active'));
+        // 移除所有顶部链接的active
+        topLinks.forEach(link => link.classList.remove('active-top'));
+
+        // 给对应的侧边栏链接加上active
+        const sidebarLink = document.querySelector(`.nav-link[data-target="${targetId}"]`);
+        if (sidebarLink) sidebarLink.classList.add('active');
+
+        // 给对应的顶部链接加上active
+        const topLink = document.querySelector(`.top-link[data-target="${targetId}"]`);
+        if (topLink) topLink.classList.add('active-top');
+
+        // 手机端自动关闭侧边栏
+        if (window.innerWidth <= 700) {
+            document.querySelector('.sidebar').classList.remove('open');
+        }
+    }
+
+    // 监听侧边栏链接点击
+    navLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            const target = this.getAttribute('data-target');
+            switchPage(target);
+        });
+    });
+
+    // 监听顶部链接点击
+    topLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            const target = this.getAttribute('data-target');
+            switchPage(target);
+        });
+    });
+</script>
 
 </body>
 </html>
